@@ -1,14 +1,14 @@
 import json
 import pyodbc
 import requests
+# Eliminar esta linea, en mi caso es para importar los datos del servidor y la db.
 import SECRETS
 
+# En las siguientes lineas va la información del servidor y la db donde se quieran crear las tablas
 server = SECRETS.server
 database = SECRETS.database
 username = SECRETS.username
 password = SECRETS.password
-con = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
-cursor = con.cursor()
 
 provincias = requests.get('https://infra.datos.gob.ar/catalog/modernizacion/dataset/7/distribution/7.2/download/provincias.json').json()
 departamentos = requests.get('https://infra.datos.gob.ar/catalog/modernizacion/dataset/7/distribution/7.3/download/departamentos.json').json()
