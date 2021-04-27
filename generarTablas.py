@@ -15,6 +15,16 @@ departamentos = requests.get('https://infra.datos.gob.ar/catalog/modernizacion/d
 localidades = requests.get('https://infra.datos.gob.ar/catalog/modernizacion/dataset/7/distribution/7.27/download/localidades-censales.json').json()
 
 
+# Creación tabla provincias
+crearTablaProvincias = '''DROP TABLE IF EXISTS Provincias;
+CREATE TABLE Provincias (
+  id int NOT NULL,
+  nombre varchar(255) NOT NULL,
+  PRIMARY KEY (id)
+)'''
+cursor.execute(crearTablaProvincias)
+
+
 # For loop para hacer insert de cada provincia
 for provincia in provincias['provincias']:
     nombre = provincia['nombre']
@@ -24,6 +34,17 @@ for provincia in provincias['provincias']:
     data = [(id, nombre)]
     cursor.executemany(query, data)
     cursor.commit()
+
+
+# Creación tabla departamentos
+crearTablaDepartamentos = '''DROP TABLE IF EXISTS Departamentos;
+CREATE TABLE Departamentos (
+  id int NOT NULL,
+  nombre varchar(255) NOT NULL,
+  id_provincia int FOREIGN KEY REFERENCES Provincias(id),
+  PRIMARY KEY (id)
+)'''
+cursor.execute(crearTablaDepartamentos)
 
 # For loop para hacer insert de cada Departamento
 for departamento in departamentos['departamentos']:
@@ -36,6 +57,17 @@ for departamento in departamentos['departamentos']:
     cursor.executemany(query, data)
     cursor.commit()
 
+
+# Creación tabla localidades
+crearTablaLocalidades = '''DROP TABLE IF EXISTS Localidades;
+CREATE TABLE Localidades (
+  id int NOT NULL,
+  nombre varchar(255) NOT NULL,
+  id_departamento int FOREIGN KEY REFERENCES Departamentos(id),
+  PRIMARY KEY (id)
+)'''
+cursor.execute(crearTablaLocalidades)
+
 # For loop para hacer insert de cada Localidad
 for localidad in localidades['localidades-censales']:
     nombre = localidad['nombre']
@@ -46,5 +78,3 @@ for localidad in localidades['localidades-censales']:
     data = [(id, nombre, id_departamento)]
     cursor.executemany(query, data)
     cursor.commit()
-
-    
